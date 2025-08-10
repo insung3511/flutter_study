@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
+
 class HomePage extends StatelessWidget {
-  const HomePage({super.key});
+  final ScrollController? scrollController;
+  const HomePage({Key? key, this.scrollController}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
@@ -9,6 +11,7 @@ class HomePage extends StatelessWidget {
     final horizontalPadding = isMobile ? 16.0 : width * 0.15;
     final height = MediaQuery.of(context).size.height;
     return ListView(
+      controller: scrollController,
       padding: EdgeInsets.zero,
       children: [
         // Section 1

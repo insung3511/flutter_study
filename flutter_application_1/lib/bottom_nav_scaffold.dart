@@ -41,8 +41,19 @@ class BottomNavScaffold extends StatefulWidget {
 }
 
 class _BottomNavScaffoldState extends State<BottomNavScaffold> {
+  final ScrollController _scrollController = ScrollController();
+
   void _onItemTapped(int index) async {
-    if (index == 1) {
+    if (index == 0) {
+      // Scroll to top when Home is tapped (gentler motion)
+      if (_scrollController.hasClients) {
+        _scrollController.animateTo(
+          0.0,
+          duration: const Duration(milliseconds: 700),
+          curve: Curves.easeInOut,
+        );
+      }
+    } else if (index == 1) {
       // Menu: show as modal bottom sheet
       await showModalBottomSheet(
         context: context,
@@ -71,7 +82,6 @@ class _BottomNavScaffoldState extends State<BottomNavScaffold> {
         ),
       );
     }
-    // Home (index 0) does nothing, HomePage is always shown
   }
 
   @override
@@ -84,10 +94,11 @@ class _BottomNavScaffoldState extends State<BottomNavScaffold> {
       extendBody: true,
       body: Stack(
         children: [
-          const HomePage(),
-          // Floating glass nav bar at the top
+          // Pass the scroll controller to HomePage (update HomePage to accept it)
+          HomePage(scrollController: _scrollController),
+          // Floating glass nav bar at the bottom
           Positioned(
-            top: isMobile ? 16 : 32,
+            bottom: isMobile ? 16 : 32,
             left: (width - barWidth) / 2,
             child: SizedBox(
               width: barWidth,
