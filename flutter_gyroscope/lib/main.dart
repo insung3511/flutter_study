@@ -3,13 +3,10 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/scheduler.dart';
-import 'package:flutter_hooks/flutter_hooks.dart';
-import 'package:sensors_plus/sensors_plus.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 
 import 'package:liquid_glass_renderer/liquid_glass_renderer.dart';
-import 'package:rivership/rivership.dart';
 
 import 'widgets/ball_physics.dart';
 import 'widgets/liquid_glass_ball.dart';
@@ -31,6 +28,8 @@ class MyApp extends StatelessWidget {
 }
 
 class BallGameScreen extends StatefulWidget {
+  const BallGameScreen({super.key});
+
   @override
   State<BallGameScreen> createState() => _BallGameScreenState();
 }
