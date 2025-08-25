@@ -26,6 +26,9 @@
 	<string>$(FLUTTER_BUILD_NUMBER)</string>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
+	<!-- 자이로스코프 센서 사용 권한 요청 -->
+	<key>NSMotionUsageDescription</key>
+	<string>자이로스코프 센서를 사용하여 공을 움직입니다.</string>
 	<key>UIApplicationSupportsIndirectInputEvents</key>
 	<true/>
 	<key>UILaunchStoryboardName</key>
