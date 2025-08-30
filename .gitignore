@@ -8,6 +8,7 @@
 .history
 .DS_Store
 
+/flutter
 
 # Flutter repo-specific
 /bin/cache/
