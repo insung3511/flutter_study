@@ -9,7 +9,7 @@ class ChatProvider with ChangeNotifier {
   
   bool _isLoading = false;
   bool _isOllamaConnected = false;
-  String _selectedModel = 'llama3.2';
+  String _selectedModel = 'gemma2:1b';
   List<String> _availableModels = [];
   List<DiscoveredServer> _discoveredServers = [];
   String _connectionStatus = 'Initializing...';

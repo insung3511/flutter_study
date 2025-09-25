@@ -366,8 +366,8 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
 2. Start Ollama service:
    ollama serve
 
-3. Pull a model (e.g., llama3.2):
-   ollama pull llama3.2
+3. Pull a model (e.g., gemma2:1b):
+   ollama pull gemma2:1b
 
 4. Find your Pi's IP address:
    hostname -I
@@ -382,8 +382,8 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
 2. Start Ollama service:
    ollama serve
 
-3. Pull a model (e.g., llama3.2):
-   ollama pull llama3.2
+3. Pull a model (e.g., gemma2:1b):
+   ollama pull gemma2:1b
 
 4. Find your server's IP address:
    hostname -I
@@ -405,8 +405,8 @@ class _ServerConfigScreenState extends State<ServerConfigScreen> {
 2. Start Ollama service:
    ollama serve
 
-3. Pull a model (e.g., llama3.2):
-   ollama pull llama3.2
+3. Pull a model (e.g., gemma2:1b):
+   ollama pull gemma2:1b
         ''';
     }
   }

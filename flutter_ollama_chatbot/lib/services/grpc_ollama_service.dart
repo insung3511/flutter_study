@@ -194,7 +194,7 @@ class GrpcOllamaService {
         port: _currentPort,
         protocol: 'grpc',
         supportsGrpc: true,
-        availableModels: ['llama3.2', 'llama3.1', 'mistral'],
+        availableModels: ['gemma2:1b', 'gemma2:2b', 'gemma2:4b'],
         lastSeen: DateTime.now(),
         capabilities: '{"streaming": true, "batch_processing": true}',
       );
@@ -210,8 +210,8 @@ class GrpcOllamaService {
     
     try {
       // This would use the generated gRPC client
-      // For now, simulate with common models
-      return ['llama3.2', 'llama3.1', 'mistral', 'codellama', 'gemma'];
+      // For now, simulate with Gemma models optimized for Raspberry Pi
+      return ['gemma2:1b', 'gemma2:2b', 'gemma2:4b', 'gemma2:9b'];
     } catch (e) {
       print('Error getting available models: $e');
       return [];

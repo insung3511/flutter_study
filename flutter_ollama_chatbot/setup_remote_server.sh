@@ -16,7 +16,7 @@ NC='\033[0m' # No Color
 OLLAMA_PORT=${OLLAMA_PORT:-11434}
 OLLAMA_GRPC_PORT=${OLLAMA_GRPC_PORT:-9090}
 OLLAMA_HOST=${OLLAMA_HOST:-0.0.0.0}
-DEFAULT_MODEL="llama3.2"
+DEFAULT_MODEL="gemma2:1b"
 ENABLE_GRPC=${ENABLE_GRPC:-true}
 ENABLE_DISCOVERY=${ENABLE_DISCOVERY:-true}
 
@@ -296,6 +296,7 @@ start_ollama() {
 download_model() {
     print_status "Downloading default model ($DEFAULT_MODEL)..."
     print_warning "This may take a while depending on your internet connection and model size"
+    print_status "Gemma 2 1B (~1.2GB) - Optimized for Raspberry Pi performance"
     
     # Wait for Ollama to be ready
     sleep 5
@@ -303,6 +304,7 @@ download_model() {
     ollama pull $DEFAULT_MODEL
     
     print_success "Model $DEFAULT_MODEL downloaded successfully"
+    print_status "Model is ready for use with your Flutter app!"
 }
 
 # Function to show connection info
@@ -347,6 +349,11 @@ show_connection_info() {
     if [[ "$ENABLE_DISCOVERY" == "true" ]]; then
         echo "• Auto Discovery: Use 'Find Servers' button in app"
     fi
+    echo
+    echo "Model Recommendations:"
+    echo "• Current: $DEFAULT_MODEL (optimized for Raspberry Pi)"
+    echo "• For more RAM: ollama pull gemma2:2b"
+    echo "• For best quality: ollama pull gemma2:4b"
     echo "=============================================="
 }
 
@@ -375,7 +382,7 @@ show_help() {
     echo "Options:"
     echo "  -p, --port PORT       Set Ollama port (default: 11434)"
     echo "  -h, --host HOST       Set Ollama host (default: 0.0.0.0)"
-    echo "  -m, --model MODEL     Download specific model (default: llama3.2)"
+    echo "  -m, --model MODEL     Download specific model (default: gemma2:1b)"
     echo "  --skip-model          Skip model download"
     echo "  --skip-firewall       Skip firewall configuration"
     echo "  --test-only           Only test existing installation"
@@ -383,7 +390,7 @@ show_help() {
     echo
     echo "Examples:"
     echo "  $0                                    # Full setup with defaults"
-    echo "  $0 -p 8080 -m llama3.1               # Use port 8080 and llama3.1 model"
+    echo "  $0 -p 8080 -m gemma2:2b              # Use port 8080 and gemma2:2b model"
     echo "  $0 --skip-model --skip-firewall      # Setup without model download and firewall"
     echo "  $0 --test-only                       # Test existing installation"
 }

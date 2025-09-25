@@ -32,8 +32,8 @@ curl -fsSL https://ollama.ai/install.sh | sh
 # Start Ollama service
 ollama serve
 
-# Pull a model (e.g., Llama 3.2)
-ollama pull llama3.2
+# Pull a model (e.g., Gemma 2 1B - optimized for Raspberry Pi)
+ollama pull gemma2:1b
 ```
 
 #### Option B: Raspberry Pi Server (Recommended for production)
@@ -45,8 +45,8 @@ curl -fsSL https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/ma
 wget https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh
 chmod +x setup_remote_server.sh
 
-# Full setup with gRPC and auto-discovery
-./setup_remote_server.sh --port 11434 --grpc-port 9090 --model llama3.2
+# Full setup with gRPC and auto-discovery (using Gemma 2 1B for Raspberry Pi)
+./setup_remote_server.sh --port 11434 --grpc-port 9090 --model gemma2:1b
 
 # HTTP-only setup (faster, less features)
 ./setup_remote_server.sh --port 11434 --no-grpc --no-discovery
@@ -57,8 +57,8 @@ chmod +x setup_remote_server.sh
 # On your Linux server, run our setup script
 curl -fsSL https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh | bash
 
-# Or with custom configuration
-./setup_remote_server.sh --port 8080 --grpc-port 9091 --model llama3.1
+# Or with custom configuration (using Gemma 2 2B for better performance)
+./setup_remote_server.sh --port 8080 --grpc-port 9091 --model gemma2:2b
 ```
 
 ### 2. Flutter Development Setup
@@ -195,23 +195,37 @@ If you prefer manual setup:
    sudo firewall-cmd --reload
    ```
 
-4. **Download Models**:
+4. **Download Models** (choose based on your Pi's RAM):
    ```bash
-   ollama pull llama3.2
-   ollama pull llama3.1
-   ollama pull mistral
+   # For Raspberry Pi 4 (4GB) - Ultra-fast
+   ollama pull gemma2:1b
+   
+   # For Raspberry Pi 4 (8GB) - Good balance
+   ollama pull gemma2:2b
+   
+   # For Raspberry Pi 5 (8GB) - High quality
+   ollama pull gemma2:4b
    ```
 
 ### Available Models
 
-The app will automatically detect available models from your Ollama installation. Popular models include:
+The app will automatically detect available models from your Ollama installation. **Recommended models for Raspberry Pi:**
 
-- `llama3.2` - Meta's Llama 3.2 (recommended for most use cases)
-- `llama3.1` - Meta's Llama 3.1 (good balance of performance and speed)
-- `mistral` - Mistral AI models (efficient and fast)
-- `codellama` - Code-focused Llama variant
-- `gemma` - Google's Gemma models (lightweight)
-- `phi3` - Microsoft's Phi-3 models (mobile-optimized)
+#### **Gemma 2 Models (Recommended for Raspberry Pi):**
+- `gemma2:1b` - **Best for Raspberry Pi** - Ultra-fast, 1 billion parameters, ~1.2GB RAM
+- `gemma2:2b` - **Good balance** - Fast with better quality, 2 billion parameters, ~2.4GB RAM  
+- `gemma2:4b` - **High quality** - Excellent performance, 4 billion parameters, ~4.8GB RAM
+- `gemma2:9b` - **Premium quality** - Best results, 9 billion parameters, ~10GB RAM (Pi 5 only)
+
+#### **Other Compatible Models:**
+- `phi3:mini` - Microsoft's Phi-3 Mini (efficient for Pi)
+- `qwen2.5:0.5b` - Very lightweight option
+- `tinyllama` - Ultra-minimal model for testing
+
+#### **Model Selection Guide:**
+- **Raspberry Pi 4 (4GB)**: Use `gemma2:1b` or `gemma2:2b`
+- **Raspberry Pi 4 (8GB)**: Use `gemma2:2b` or `gemma2:4b`
+- **Raspberry Pi 5 (8GB)**: Use `gemma2:4b` or `gemma2:9b`
 
 ## Project Structure
 
