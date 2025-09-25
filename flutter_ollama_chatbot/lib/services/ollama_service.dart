@@ -1,19 +1,44 @@
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import '../config/ollama_config.dart';
+import 'error_logging_service.dart';
 
 class OllamaService {
+  final ErrorLoggingService _logger = ErrorLoggingService();
   
   // Check if Ollama is running
   Future<bool> isOllamaRunning() async {
     try {
       final baseUrl = await OllamaConfig.getBaseUrl();
+      final startTime = DateTime.now();
+      
       final response = await http.get(
         Uri.parse('$baseUrl/api/tags'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(OllamaConfig.connectionTimeout);
-      return response.statusCode == 200;
-    } catch (e) {
+      
+      final duration = DateTime.now().difference(startTime);
+      
+      await _logger.logHttpRequest(
+        method: 'GET',
+        url: '$baseUrl/api/tags',
+        statusCode: response.statusCode,
+        duration: duration,
+      );
+      
+      final isRunning = response.statusCode == 200;
+      
+      if (isRunning) {
+        await _logger.info('Ollama server is running', component: 'OllamaService');
+      } else {
+        await _logger.warning('Ollama server responded with status ${response.statusCode}', 
+            component: 'OllamaService', metadata: {'statusCode': response.statusCode});
+      }
+      
+      return isRunning;
+    } catch (e, stackTrace) {
+      await _logger.error('Failed to check if Ollama is running: $e', 
+          component: 'OllamaService', stackTrace: stackTrace);
       return false;
     }
   }

@@ -125,6 +125,9 @@ RestartSec=3
 Environment="OLLAMA_HOST=$OLLAMA_HOST:$OLLAMA_PORT"
 Environment="OLLAMA_ORIGINS=*"
 Environment="OLLAMA_GRPC_PORT=$OLLAMA_GRPC_PORT"
+Environment="OLLAMA_KEEP_ALIVE=5m"
+Environment="OLLAMA_NUM_PARALLEL=1"
+Environment="OLLAMA_MAX_LOADED_MODELS=1"
 
 [Install]
 WantedBy=default.target
@@ -363,12 +366,43 @@ test_connection() {
     
     local server_ip=$(hostname -I | awk '{print $1}')
     local test_url="http://$server_ip:$OLLAMA_PORT/api/tags"
+    local localhost_url="http://localhost:$OLLAMA_PORT/api/tags"
     
-    if curl -s -f "$test_url" > /dev/null; then
-        print_success "Connection test passed!"
+    print_status "Testing localhost connection..."
+    if curl -s -f "$localhost_url" > /dev/null 2>&1; then
+        print_success "Localhost connection test passed!"
+    else
+        print_error "Localhost connection test failed!"
+        print_status "Checking Ollama service status..."
+        sudo systemctl status ollama --no-pager -l
+        print_status "Checking Ollama logs..."
+        sudo journalctl -u ollama --no-pager -n 20
+        return 1
+    fi
+    
+    print_status "Testing remote connection ($test_url)..."
+    local response=$(curl -s -w "%{http_code}" -o /tmp/ollama_test_response "$test_url" 2>/dev/null)
+    
+    if [ "$response" = "200" ]; then
+        print_success "Remote connection test passed!"
+        print_status "Response: $(cat /tmp/ollama_test_response)"
+        rm -f /tmp/ollama_test_response
         return 0
     else
-        print_error "Connection test failed!"
+        print_error "Remote connection test failed! HTTP Code: $response"
+        print_status "Response: $(cat /tmp/ollama_test_response 2>/dev/null || echo 'No response')"
+        rm -f /tmp/ollama_test_response
+        
+        print_status "Debugging connection issues..."
+        print_status "1. Checking if Ollama is listening on port $OLLAMA_PORT:"
+        netstat -tlnp | grep ":$OLLAMA_PORT" || echo "Port $OLLAMA_PORT not listening"
+        
+        print_status "2. Checking if Ollama is listening on all interfaces:"
+        ss -tlnp | grep ":$OLLAMA_PORT" || echo "Port $OLLAMA_PORT not found in ss output"
+        
+        print_status "3. Testing with curl verbose output:"
+        curl -v "$test_url" 2>&1 | head -20
+        
         return 1
     fi
 }

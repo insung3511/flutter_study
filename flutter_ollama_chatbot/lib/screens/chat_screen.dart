@@ -7,6 +7,7 @@ import '../widgets/chat_input.dart';
 import '../widgets/connection_status.dart';
 import 'server_config_screen.dart';
 import 'server_discovery_screen.dart';
+import 'error_logs_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -74,6 +75,18 @@ class _ChatScreenState extends State<ChatScreen> {
             },
             icon: Icon(MdiIcons.cog),
             tooltip: 'Server Settings',
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ErrorLogsScreen(),
+                ),
+              );
+            },
+            icon: Icon(MdiIcons.fileDocumentOutline),
+            tooltip: 'Error Logs',
           ),
           Consumer<ChatProvider>(
             builder: (context, chatProvider, child) {
