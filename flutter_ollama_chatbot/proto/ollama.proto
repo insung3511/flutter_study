@@ -1,0 +1,83 @@
+syntax = "proto3";
+
+package ollama;
+
+// Ollama gRPC service definition
+service OllamaService {
+  // Check if server is running and get available models
+  rpc GetServerInfo(Empty) returns (ServerInfo);
+  
+  // Get list of available models
+  rpc GetModels(Empty) returns (ModelsResponse);
+  
+  // Generate response from a model
+  rpc Generate(GenerateRequest) returns (stream GenerateResponse);
+  
+  // Generate single response (non-streaming)
+  rpc GenerateSingle(GenerateRequest) returns (GenerateResponse);
+}
+
+// Server discovery service
+service DiscoveryService {
+  // Broadcast server information for discovery
+  rpc BroadcastServer(BroadcastRequest) returns (Empty);
+  
+  // Discover available servers
+  rpc DiscoverServers(Empty) returns (stream ServerInfo);
+}
+
+// Message definitions
+message Empty {}
+
+message ServerInfo {
+  string server_id = 1;
+  string server_name = 2;
+  string version = 3;
+  string host = 4;
+  int32 port = 5;
+  string protocol = 6; // "grpc" or "http"
+  bool supports_grpc = 7;
+  repeated string available_models = 8;
+  int64 last_seen = 9;
+  string capabilities = 10; // JSON string of server capabilities
+}
+
+message ModelsResponse {
+  repeated ModelInfo models = 1;
+}
+
+message ModelInfo {
+  string name = 1;
+  string size = 2;
+  string digest = 3;
+  map<string, string> details = 4;
+}
+
+message GenerateRequest {
+  string model = 1;
+  string prompt = 2;
+  string system = 3;
+  string context = 4;
+  bool stream = 5;
+  string format = 6;
+  map<string, string> options = 7;
+}
+
+message GenerateResponse {
+  string model = 1;
+  string response = 2;
+  bool done = 3;
+  string context = 4;
+  int64 total_duration = 5;
+  int64 load_duration = 6;
+  int64 prompt_eval_count = 7;
+  int64 prompt_eval_duration = 8;
+  int64 eval_count = 9;
+  int64 eval_duration = 10;
+  map<string, string> metadata = 11;
+}
+
+message BroadcastRequest {
+  ServerInfo server_info = 1;
+  int32 ttl = 2; // Time to live in seconds
+}

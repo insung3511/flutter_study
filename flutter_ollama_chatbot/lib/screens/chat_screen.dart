@@ -5,6 +5,8 @@ import '../providers/chat_provider.dart';
 import '../widgets/message_bubble.dart';
 import '../widgets/chat_input.dart';
 import '../widgets/connection_status.dart';
+import 'server_config_screen.dart';
+import 'server_discovery_screen.dart';
 
 class ChatScreen extends StatefulWidget {
   const ChatScreen({super.key});
@@ -43,6 +45,36 @@ class _ChatScreenState extends State<ChatScreen> {
         foregroundColor: Colors.white,
         elevation: 0,
         actions: [
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ServerDiscoveryScreen(),
+                ),
+              ).then((_) {
+                // Refresh connection after returning from discovery screen
+                Provider.of<ChatProvider>(context, listen: false).refreshConnection();
+              });
+            },
+            icon: Icon(MdiIcons.radar),
+            tooltip: 'Find Servers',
+          ),
+          IconButton(
+            onPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(
+                  builder: (context) => const ServerConfigScreen(),
+                ),
+              ).then((_) {
+                // Refresh connection after returning from config screen
+                Provider.of<ChatProvider>(context, listen: false).refreshConnection();
+              });
+            },
+            icon: Icon(MdiIcons.cog),
+            tooltip: 'Server Settings',
+          ),
           Consumer<ChatProvider>(
             builder: (context, chatProvider, child) {
               return IconButton(
@@ -71,6 +103,7 @@ class _ChatScreenState extends State<ChatScreen> {
                       }
                     : null,
                 icon: Icon(MdiIcons.deleteOutline),
+                tooltip: 'Clear Chat',
               );
             },
           ),

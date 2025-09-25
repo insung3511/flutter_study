@@ -3,13 +3,13 @@ import 'package:http/http.dart' as http;
 import '../config/ollama_config.dart';
 
 class OllamaService {
-  static const String _baseUrl = OllamaConfig.baseUrl;
   
   // Check if Ollama is running
   Future<bool> isOllamaRunning() async {
     try {
+      final baseUrl = await OllamaConfig.getBaseUrl();
       final response = await http.get(
-        Uri.parse('$_baseUrl/api/tags'),
+        Uri.parse('$baseUrl/api/tags'),
         headers: {'Content-Type': 'application/json'},
       ).timeout(OllamaConfig.connectionTimeout);
       return response.statusCode == 200;
@@ -21,8 +21,9 @@ class OllamaService {
   // Get available models
   Future<List<String>> getAvailableModels() async {
     try {
+      final baseUrl = await OllamaConfig.getBaseUrl();
       final response = await http.get(
-        Uri.parse('$_baseUrl/api/tags'),
+        Uri.parse('$baseUrl/api/tags'),
         headers: {'Content-Type': 'application/json'},
       );
       
@@ -40,8 +41,9 @@ class OllamaService {
   // Generate response from Ollama
   Future<String> generateResponse(String message, String model) async {
     try {
+      final baseUrl = await OllamaConfig.getBaseUrl();
       final response = await http.post(
-        Uri.parse('$_baseUrl/api/generate'),
+        Uri.parse('$baseUrl/api/generate'),
         headers: {'Content-Type': 'application/json'},
         body: json.encode({
           'model': model,
@@ -64,7 +66,8 @@ class OllamaService {
   // Stream response from Ollama (for real-time typing effect)
   Stream<String> generateStreamResponse(String message, String model) async* {
     try {
-      final request = http.Request('POST', Uri.parse('$_baseUrl/api/generate'));
+      final baseUrl = await OllamaConfig.getBaseUrl();
+      final request = http.Request('POST', Uri.parse('$baseUrl/api/generate'));
       request.headers['Content-Type'] = 'application/json';
       request.body = json.encode({
         'model': model,

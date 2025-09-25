@@ -1,25 +1,32 @@
 # AI Chatbot with Ollama
 
-A Flutter application that provides an AI chatbot interface using Ollama for local AI model inference on iOS.
+A Flutter application that provides an AI chatbot interface using Ollama for AI model inference. Supports both local and remote Ollama servers, including Raspberry Pi and Linux servers.
 
 ## Features
 
 - 🤖 **AI Chat Interface**: Clean, modern chat UI with message bubbles
-- 🔗 **Ollama Integration**: Connects to local Ollama server for AI responses
-- 📱 **iOS Optimized**: Designed specifically for iOS with native feel
+- 🔗 **Ollama Integration**: Connects to local or remote Ollama servers for AI responses
+- 📱 **Multi-Platform**: Works on iOS, Android, Web, and Desktop
 - 🎨 **Modern UI**: Material Design 3 with dark/light theme support
 - 📝 **Markdown Support**: Rich text rendering for AI responses
 - 🔄 **Real-time Status**: Connection status indicator and model selection
 - 💬 **Message History**: Persistent chat history during session
+- ⚙️ **Server Configuration**: Easy setup for Raspberry Pi and Linux servers
+- 🌐 **Remote Access**: Connect to Ollama servers on your local network
+- ⚡ **gRPC Support**: Fast, efficient communication protocol for better performance
+- 🔍 **Auto Discovery**: Automatically find Ollama servers on your network using mDNS
+- 🔄 **Hybrid Protocol**: Automatic fallback between gRPC and HTTP for maximum compatibility
+- 📊 **Connection Metrics**: Real-time performance monitoring and server health
 
 ## Prerequisites
 
-### 1. Install Ollama
+### 1. Ollama Server Setup
 
-First, you need to install and run Ollama on your machine:
+You have several options for running Ollama:
 
+#### Option A: Local Development (Recommended for testing)
 ```bash
-# Install Ollama
+# Install Ollama locally
 curl -fsSL https://ollama.ai/install.sh | sh
 
 # Start Ollama service
@@ -29,16 +36,41 @@ ollama serve
 ollama pull llama3.2
 ```
 
+#### Option B: Raspberry Pi Server (Recommended for production)
+```bash
+# On your Raspberry Pi, run our setup script with full features
+curl -fsSL https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh | bash
+
+# Or download and run manually with custom options
+wget https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh
+chmod +x setup_remote_server.sh
+
+# Full setup with gRPC and auto-discovery
+./setup_remote_server.sh --port 11434 --grpc-port 9090 --model llama3.2
+
+# HTTP-only setup (faster, less features)
+./setup_remote_server.sh --port 11434 --no-grpc --no-discovery
+```
+
+#### Option C: Linux Server Setup
+```bash
+# On your Linux server, run our setup script
+curl -fsSL https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh | bash
+
+# Or with custom configuration
+./setup_remote_server.sh --port 8080 --grpc-port 9091 --model llama3.1
+```
+
 ### 2. Flutter Development Setup
 
-Make sure you have Flutter installed and configured for iOS development:
+Make sure you have Flutter installed and configured:
 
 ```bash
 # Check Flutter installation
 flutter doctor
 
-# Install iOS dependencies
-flutter doctor --android-licenses
+# Install dependencies
+flutter pub get
 ```
 
 ## Getting Started
@@ -50,58 +82,144 @@ cd flutter_ollama_chatbot
 flutter pub get
 ```
 
-### 2. Run on iOS
+### 2. Configure Server Connection
+
+The app supports multiple server configurations:
+
+1. **Local Development**: Uses `localhost:11434` by default
+2. **Raspberry Pi**: Configure with your Pi's IP address
+3. **Linux Server**: Configure with your server's IP address
+4. **Custom URL**: Use any custom Ollama server URL
+
+### 3. Run the App
 
 ```bash
-# Run on iOS simulator
-flutter run -d ios
-
-# Or run on physical iOS device
-flutter run -d ios --device-id=<your-device-id>
+# Run on your preferred platform
+flutter run -d ios          # iOS
+flutter run -d android      # Android
+flutter run -d web          # Web
+flutter run -d macos        # macOS
+flutter run -d linux        # Linux
+flutter run -d windows      # Windows
 ```
 
-### 3. Start Ollama
+### 4. Connect to Servers
 
-Make sure Ollama is running on your machine:
+#### Option A: Auto Discovery (Recommended)
+1. **Find Servers**: Tap the radar icon (📡) in the app's top-right corner
+2. **Auto Discovery**: The app will automatically find Ollama servers on your network
+3. **Select Server**: Choose from discovered servers (gRPC servers are preferred)
+4. **Connect**: Tap "Connect" on your preferred server
 
-```bash
-ollama serve
-```
-
-The app will automatically detect when Ollama is running and show the connection status.
+#### Option B: Manual Configuration
+1. **Open Settings**: Tap the gear icon (⚙️) in the app's top-right corner
+2. **Select Server Type**: Choose from Local, Raspberry Pi, Linux Server, or Custom
+3. **Enter Details**: Provide IP address and port (for remote servers)
+4. **Test Connection**: Use the "Test Connection" button to verify
+5. **Save Configuration**: Tap "Save Configuration" to apply settings
 
 ## Usage
 
-1. **Start Ollama**: Run `ollama serve` in your terminal
-2. **Open the App**: Launch the Flutter app on your iOS device/simulator
-3. **Check Connection**: The app will show "Connected to Ollama" when ready
-4. **Start Chatting**: Type your message and tap the send button
-5. **Switch Models**: Use the dropdown in the connection bar to switch between available models
+1. **Auto-Connect**: The app automatically discovers and connects to the best available server
+2. **Check Connection**: The status bar shows connection type (gRPC/HTTP) and server info
+3. **Start Chatting**: Type your message and tap the send button for fast AI responses
+4. **Switch Models**: Use the dropdown in the connection bar to switch between available models
+5. **Monitor Performance**: View connection metrics and server health in the discovery screen
+6. **Clear Chat**: Use the trash icon to clear your conversation history
 
-## Configuration
+### Protocol Selection
 
-### Ollama Server URL
+The app automatically chooses the best protocol:
+- **gRPC** (Preferred): Faster, more efficient communication
+- **HTTP** (Fallback): Compatible with all Ollama servers
+- **Auto**: Tries gRPC first, falls back to HTTP if needed
 
-The app connects to `http://localhost:11434` by default. To change this, modify the `_baseUrl` in `lib/services/ollama_service.dart`:
+## Server Setup Guide
 
-```dart
-static const String _baseUrl = 'http://your-server:11434';
-```
+### Raspberry Pi Setup
+
+1. **Install OS**: Flash Raspberry Pi OS to your SD card
+2. **Enable SSH**: Create an empty `ssh` file in the boot partition
+3. **Connect**: SSH into your Pi: `ssh pi@<pi-ip-address>`
+4. **Run Setup Script**: 
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh | bash
+   ```
+5. **Configure App**: Use your Pi's IP address in the Flutter app
+
+### Linux Server Setup
+
+1. **Access Server**: SSH into your Linux server
+2. **Run Setup Script**:
+   ```bash
+   curl -fsSL https://raw.githubusercontent.com/your-repo/flutter_ollama_chatbot/main/setup_remote_server.sh | bash
+   ```
+3. **Custom Configuration**:
+   ```bash
+   # Custom port and model
+   ./setup_remote_server.sh --port 8080 --model llama3.1
+   
+   # Skip model download
+   ./setup_remote_server.sh --skip-model
+   
+   # Test existing installation
+   ./setup_remote_server.sh --test-only
+   ```
+
+### Manual Server Configuration
+
+If you prefer manual setup:
+
+1. **Install Ollama**:
+   ```bash
+   curl -fsSL https://ollama.ai/install.sh | sh
+   ```
+
+2. **Configure for Remote Access**:
+   ```bash
+   # Set environment variables
+   export OLLAMA_HOST=0.0.0.0:11434
+   export OLLAMA_ORIGINS=*
+   
+   # Start Ollama
+   ollama serve
+   ```
+
+3. **Configure Firewall**:
+   ```bash
+   # Ubuntu/Debian
+   sudo ufw allow 11434/tcp
+   
+   # CentOS/RHEL
+   sudo firewall-cmd --permanent --add-port=11434/tcp
+   sudo firewall-cmd --reload
+   ```
+
+4. **Download Models**:
+   ```bash
+   ollama pull llama3.2
+   ollama pull llama3.1
+   ollama pull mistral
+   ```
 
 ### Available Models
 
 The app will automatically detect available models from your Ollama installation. Popular models include:
 
-- `llama3.2` - Meta's Llama 3.2
-- `llama3.1` - Meta's Llama 3.1
-- `mistral` - Mistral AI models
+- `llama3.2` - Meta's Llama 3.2 (recommended for most use cases)
+- `llama3.1` - Meta's Llama 3.1 (good balance of performance and speed)
+- `mistral` - Mistral AI models (efficient and fast)
 - `codellama` - Code-focused Llama variant
+- `gemma` - Google's Gemma models (lightweight)
+- `phi3` - Microsoft's Phi-3 models (mobile-optimized)
 
 ## Project Structure
 
 ```
 lib/
 ├── main.dart                 # App entry point
+├── config/
+│   └── ollama_config.dart   # Server configuration management
 ├── models/
 │   └── message.dart         # Message data model
 ├── providers/
@@ -109,26 +227,63 @@ lib/
 ├── services/
 │   └── ollama_service.dart  # Ollama API integration
 ├── screens/
-│   └── chat_screen.dart     # Main chat interface
+│   ├── chat_screen.dart     # Main chat interface
+│   └── server_config_screen.dart # Server configuration UI
 └── widgets/
     ├── message_bubble.dart  # Message display widget
     ├── chat_input.dart      # Input field widget
     └── connection_status.dart # Status indicator
+
+setup_remote_server.sh      # Automated server setup script
 ```
 
 ## Troubleshooting
 
 ### Connection Issues
 
-- **"Ollama not running"**: Make sure Ollama is started with `ollama serve`
-- **"Error connecting to Ollama"**: Check if Ollama is accessible at `http://localhost:11434`
-- **No models available**: Pull a model with `ollama pull <model-name>`
+- **"Ollama not running"**: Make sure Ollama is started on your server
+- **"Error connecting to Ollama"**: Check if the server IP and port are correct
+- **"Connection timeout"**: Verify network connectivity and firewall settings
+- **No models available**: Pull a model with `ollama pull <model-name>` on your server
 
-### iOS Development Issues
+### Server Issues
+
+- **Can't access remote server**: Check firewall settings and ensure port 11434 is open
+- **Permission denied**: Make sure Ollama service is running with proper permissions
+- **Model download fails**: Check internet connection and available disk space on server
+
+### App Issues
 
 - **Build errors**: Run `flutter clean && flutter pub get`
-- **Simulator issues**: Reset iOS simulator or try a different device
-- **Permission issues**: Check iOS development certificates
+- **Platform-specific issues**: Check Flutter doctor output for platform-specific problems
+- **Settings not saving**: Ensure the app has proper storage permissions
+
+### Network Troubleshooting
+
+1. **Test server connectivity**:
+   ```bash
+   # From your device, test if server is reachable
+   ping <server-ip>
+   
+   # Test if Ollama port is open
+   telnet <server-ip> 11434
+   ```
+
+2. **Check Ollama service status**:
+   ```bash
+   # On the server
+   sudo systemctl status ollama
+   sudo journalctl -u ollama -f
+   ```
+
+3. **Verify Ollama is accessible**:
+   ```bash
+   # Test from server itself
+   curl http://localhost:11434/api/tags
+   
+   # Test from another device on network
+   curl http://<server-ip>:11434/api/tags
+   ```
 
 ## Dependencies
 
@@ -136,6 +291,12 @@ lib/
 - `provider`: State management
 - `flutter_markdown`: Markdown rendering for AI responses
 - `material_design_icons_flutter`: Additional icons
+- `shared_preferences`: Local storage for server configuration
+- `grpc`: gRPC client for fast communication
+- `protobuf`: Protocol buffer support
+- `network_info_plus`: Network information for discovery
+- `multicast_dns`: mDNS service discovery
+- `json_annotation`: JSON serialization support
 
 ## Contributing
 

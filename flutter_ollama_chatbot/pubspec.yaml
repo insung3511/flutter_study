@@ -46,6 +46,20 @@ dependencies:
   
   # Icons
   material_design_icons_flutter: ^7.0.7296
+  
+  # Local storage for settings
+  shared_preferences: ^2.3.2
+  
+  # gRPC dependencies
+  grpc: ^3.2.4
+  protobuf: ^3.1.0
+  
+  # Network discovery
+  network_info_plus: ^5.0.0
+  multicast_dns: ^0.3.2+3
+  
+  # JSON serialization
+  json_annotation: ^4.9.0
 
 dev_dependencies:
   flutter_test:
@@ -57,6 +71,11 @@ dev_dependencies:
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^5.0.0
+  
+  # Code generation
+  build_runner: ^2.4.13
+  json_serializable: ^6.8.0
+  protoc_plugin: ^21.1.2
 
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
