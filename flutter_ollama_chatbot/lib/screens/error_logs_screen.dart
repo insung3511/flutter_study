@@ -138,7 +138,7 @@ class _ErrorLogsScreenState extends State<ErrorLogsScreen> {
                     });
                   },
                   icon: Icon(
-                    _autoScroll ? MdiIcons.autoFix : MdiIcons.autoFixOff,
+                    _autoScroll ? MdiIcons.arrowDownCircle : MdiIcons.arrowDownCircleOutline,
                     color: _autoScroll ? Colors.green : Colors.grey,
                   ),
                   tooltip: _autoScroll ? 'Auto-scroll enabled' : 'Auto-scroll disabled',
@@ -341,15 +341,15 @@ class _ErrorLogsScreenState extends State<ErrorLogsScreen> {
   Icon _getLevelIcon(LogLevel level) {
     switch (level) {
       case LogLevel.debug:
-        return const Icon(MdiIcons.bug, color: Colors.grey, size: 16);
+        return const Icon(MdiIcons.bug, color: Colors.grey);
       case LogLevel.info:
-        return const Icon(MdiIcons.information, color: Colors.blue, size: 16);
+        return const Icon(MdiIcons.information, color: Colors.blue);
       case LogLevel.warning:
-        return const Icon(MdiIcons.alert, color: Colors.orange, size: 16);
+        return const Icon(MdiIcons.alert, color: Colors.orange);
       case LogLevel.error:
-        return const Icon(MdiIcons.alertCircle, color: Colors.red, size: 16);
+        return const Icon(MdiIcons.alertCircle, color: Colors.red);
       case LogLevel.critical:
-        return const Icon(MdiIcons.alertOctagon, color: Colors.red, size: 16);
+        return const Icon(MdiIcons.alertOctagon, color: Colors.red);
     }
   }
 
